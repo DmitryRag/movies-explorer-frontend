@@ -1,24 +1,70 @@
 import React from 'react'
-import './MoviesCardList.css'
-import poster1 from '../../images/poster-1.jpg'
-import poster2 from '../../images/poster-2.jpg'
 import MoviesCard from '../MoviesCard/MoviesCard'
+import './MoviesCardList.css'
 
-function MoviesCardList(props) {
-    const movies = Array.from({ length: props.saved ? 4 : 16 }, (v, k) => k);
+function MoviesCardList({ savedMovies, movies, onBookmarkClick, isSavedMovie }) {
+    const [extraPortion, setExtraPortion] = React.useState(3)
+    const [currentCount, setCurrenCount] = React.useState(0)
+    const [renderMovies, setRenderMovies] = React.useState([])
+
+    function getCount(windowSize) {
+        if (windowSize > 768 ) {
+            return {first: 16, extra: 4}
+        } else if (windowSize > 480 && windowSize <= 768) {
+            return {first: 8, extra: 2}
+        } else {
+            return {first: 5, extra: 2}
+        }
+    }
+
+    function renderExtraPortion() {
+        const count = Math.min(movies.length,currentCount+extraPortion)
+        const extraMovies = movies.slice(currentCount,count)
+        setRenderMovies([...renderMovies, ...extraMovies])
+        setCurrenCount(count)
+    }
+
+    function handleResize() {
+        const windowSize = window.innerWidth
+        const sizePortion = getCount(windowSize)
+        setExtraPortion(sizePortion.extra)
+    }
+
+    React.useEffect(() => {
+        window.addEventListener('resize', handleResize)
+        return () => {
+            window.removeEventListener('resize', handleResize)
+        }
+    },[])
+  
+    React.useEffect(() => {
+        const windowSize = window.innerWidth
+        const sizePortion = getCount(windowSize)
+        setExtraPortion(sizePortion.extra)
+        const count = Math.min(movies.length,sizePortion.first)
+        setRenderMovies(movies.slice(0,count))
+        setCurrenCount(count)
+    }, [movies])
+
+    function handleMoreCards() {
+        renderExtraPortion()
+    }
 
     return (
-        <section className="movies-card-list section">
-            <div className="movies-card-list__container">
-                {movies.map((value, index) => (
-                    <MoviesCard key={index}
-                    poster={index % 6 === 0 ? poster1 : poster2}
-                    actionState={props.saved ? 'movies-card__action_type_delete'
-                    : index % 2 === 0 ? 'movies-card__action_type_unsave' : 'movies-card__action_type_save'} />
+        <>
+            <section className='cards'>
+                {renderMovies.map((movie) => (
+                    <MoviesCard 
+                        savedMovies={savedMovies}
+                        key={movie.id}
+                        movie={movie}
+                        onBookmarkClick={onBookmarkClick}
+                        isSavedMovie={isSavedMovie}
+                    />    
                 ))}
-            </div>
-            {!props.saved && (<button type="button" className="movies-card-list__more">Ещё</button>)}
-        </section>
+            </section>
+            {currentCount < movies.length && <div className='cards__more' onClick={handleMoreCards}>Ещё</div>}
+        </>
     )
 }
 

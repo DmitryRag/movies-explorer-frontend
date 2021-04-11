@@ -1,49 +1,47 @@
 import React from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
 import './Header.css'
 import logo from '../../images/logo_titlepage.svg'
-import burger from '../../images/burger.svg'
-import { NavLink, useLocation } from 'react-router-dom'
-import Burger from '../Burger/Burger'
 
-function Header(props) {
-    const { loggedIn = false } = props
+function Header({loggedIn}) {
+    const [menuIsOpen, setMenuIsOpen] = React.useState(false)
     const location = useLocation()
+    
+    function handleOpenMenu() {
+        setMenuIsOpen(true)
+    }
 
-    return (
-        <header className={'header header' + (location.pathname === '/' ? '__main' : '')}>
-        <div className='header__container'>
-            <a href='/'><img src={logo} alt='Логотип' /></a>
-            <nav className='header__nav'>
-                <ul className='header__nav-list'>
-                    {loggedIn && (
-                    <li className='header__nav-item'>
-                        <NavLink to='/movies' className='header__nav-link' activeClassName='header__nav-link_active'>Фильмы</NavLink>
-                    </li>
-                    )}
-                    {loggedIn && (
-                    <li className='header__nav-item'>
-                        <NavLink to='/saved-movies' className='header__nav-link' activeClassName='header__nav-link_active'>Сохраненные фильмы</NavLink>
-                    </li>
-                    )}
-                </ul>
-                <ul className='header__nav-list'>
-                    {!loggedIn && (<li className='header__nav-item'><a href='/signup' className='header__register'>Регистрация</a></li>)}
-                    {!loggedIn && (<li className='header__nav-item'><a href='/signin' className='header__login'>Войти</a></li>)}
-                    {loggedIn && (
-                    <li className='header__nav-item'>
-                        <a href='/profile' className='header__profile'>Аккаунт</a>
-                    </li>)}
-                    {loggedIn && (
-                    <li className='header__nav-item'>
-                        <label htmlFor='burger'>
-                        <img src={burger} alt='Меню' className='header__burger' />
-                        </label>
-                    </li>)}
-                </ul>
+    function handleCloseMenu() {
+        setMenuIsOpen(false)
+    }
+
+    return(
+        <header className={'header header' + (location.pathname === '/' ? '__main' : '') }>
+            <NavLink to='/' className='logo'><img src={logo} alt='Логотип'/></NavLink>
+            <div className='header__container'> 
+                <nav className={`header__auth ${loggedIn && 'header__auth_hidden'}`}>
+                    <NavLink to='/signup' className='header__signup'>Регистрация</NavLink>
+                    <NavLink to='/signin' className='header__signin'>Войти</NavLink>
                 </nav>
+                <div className={`header__cover ${!loggedIn && 'header__cover_hidden'} 
+                    ${!menuIsOpen  && 'header__cover_close'}`}>
+                    <nav className='header__menu'>
+                        {menuIsOpen  && (<NavLink to='/' className='header__menu-item' onClick={handleCloseMenu}>Главная</NavLink>)}
+                        <NavLink to='/movies' className='header__menu-item' activeClassName='header__menu-item_active' onClick={handleCloseMenu}>Фильмы</NavLink>
+                        <NavLink to='/saved-movies' className='header__menu-item' activeClassName='header__menu-item_active' onClick={handleCloseMenu}>Сохранённые фильмы</NavLink>
+                        <NavLink to='/profile' className='header__profile' onClick={handleCloseMenu}>
+                        <p className='header__profile-text'>Аккаунт</p>
+                        </NavLink>
+                        <div className='header__close-menu' onClick={handleCloseMenu}>
+                            <div className='header__cross'></div>
+                        </div>
+                    </nav>
+                </div>
+                <div className={`header__open-menu ${!loggedIn && 'header__open-menu_hidden'}`} onClick={handleOpenMenu}>
+                    <div className='header__line'></div>
+                </div>
             </div>
-        <Burger />
-        </header >
+        </header>
     )
 }
 

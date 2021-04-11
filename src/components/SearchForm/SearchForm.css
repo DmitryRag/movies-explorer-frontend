@@ -43,6 +43,11 @@
     color: white;
 }
 
+.search-form__submit_disabled {
+    cursor: default;
+    background-color: gray;
+}
+
 .search-form__submit:hover {
     opacity: .7;
 }

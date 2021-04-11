@@ -1,14 +1,18 @@
 import './Input.css'
 
-function Input(props) {
+function Input({ id, name, type, placeholder, error, minLength, maxLength, onChange }) {
     return (
-        <label className='input'>{props.name}
+        <label className='input' htmlFor={id}>{placeholder}
             <input className='input__zone' 
-            type={props.type}
-            minlength={props.minlength} 
-            maxlength={props.maxlength}
-                required />
-            <span className='input__span'>Что-то пошло не так...</span>
+                id={id} 
+                type={type} 
+                name={name} 
+                required 
+                minLength={minLength} 
+                maxLength={maxLength}
+                onChange={onChange}
+            />
+            {!!error && <span className='input__span'>{error}</span>}
         </label>
     )
 }
