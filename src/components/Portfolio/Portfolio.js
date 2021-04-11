@@ -1,5 +1,5 @@
 import React from 'react'
-import './Portfolio.css';
+import './Portfolio.css'
 import portfoliolink from '../../images/portfolio-link.svg'
 
 function Portfolio() {

@@ -1,29 +1,41 @@
-import React from 'react'
 import './Movies.css'
+import React from 'react'
 import SearchForm from '../SearchForm/SearchForm'
-import Header from '../Header/Header'
-import Footer from '../Footer/Footer'
-import Preloader from '../Preloader/Preloader'
 import MoviesCardList from '../MoviesCardList/MoviesCardList'
+import Preloader from '../Preloader/Preloader'
 
-function Movies(props) {
-    const [isLoaded, setIsLoaded] = React.useState(false)
+function Movies({ savedMovies, onSubmitSearch, movies, isLoading, loadingError, onBookmarkClick, isSavedMovie }) {
+    const [shortFilm, setShortFilm] = React.useState(false)
 
-    React.useEffect(() => {
-      setTimeout(() => {
-        setIsLoaded(true)
-      }, 2000)
-    })
+    function onFilterShort(filterOn) {
+        setShortFilm(filterOn)
+    }
 
-    return(
-        <section className='movies'>
-            <Header loggedIn={true} />
-            <SearchForm />
-            {!isLoaded && (<Preloader />)}
-            {isLoaded && (<MoviesCardList saved={props.saved} />)}
-            <Footer />
+    function filterShortFilm(movies) {
+        return movies.filter((item) => {
+        return item.duration < 40
+        })
+    }
+
+    return (
+        <section>
+            <SearchForm 
+                onSubmitSearch={onSubmitSearch} 
+                onFilterShort={onFilterShort}
+                isLoading={isLoading}
+            />
+            {isLoading && <Preloader/>}
+            {!isLoading && loadingError === '' && 
+                <MoviesCardList 
+                savedMovies={savedMovies}
+                movies={shortFilm? filterShortFilm(movies) : movies}
+                onBookmarkClick={onBookmarkClick}
+                isSavedMovie={isSavedMovie}
+                />
+            }
+            {!isLoading && loadingError !== '' && <div className='movies__info'>{loadingError}</div>}
         </section>
-    )    
+    )
 }
 
 export default Movies

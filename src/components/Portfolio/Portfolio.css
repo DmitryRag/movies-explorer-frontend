@@ -46,6 +46,12 @@
     justify-content: space-between;
 }
 
+.portfolio__link-img {
+    width: 18px;
+    height: 17px;
+    margin-top: 15px;
+}
+
 @media screen and (max-width: 770px) {
     .portfolio {
         padding: 45px 50px 90px 50px;
@@ -73,7 +79,6 @@
     }
 
     .portfolio__link-img {
-        max-width: 18px;
-        max-height: 28px;
+        margin-top: 8px;
     }
 }
